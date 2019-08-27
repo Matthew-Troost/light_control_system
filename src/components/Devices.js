@@ -6,28 +6,6 @@ const ControlContainer = styled(Box)`
   border-top-left-radius: 10px;
 `;
 
-// TODO: Replace this with data loaded from the API
-const SAMPLE_DATA = [
-  {
-    id: 1,
-    name: 'Balcony',
-    active: true,
-    brightness: 50,
-  },
-  {
-    id: 2,
-    name: 'Bedroom 01',
-    active: false,
-    brightness: 70,
-  },
-  {
-    id: 3,
-    name: 'Bedroom 02',
-    active: false,
-    brightness: 70,
-  },
-];
-
 const columns = [
   {
     field: 'name',
@@ -57,24 +35,44 @@ const columns = [
   },
 ];
 
-export const Devices = () => {
-  return (
-    <Flex flex='1' mt={4}>
-      <Box flex='3' pl={3}>
-        <Table
-          flex='1'
-          columns={columns}
-          data={SAMPLE_DATA}
-          rowKey='id'
-          onRowClick={console.log}
-        />
-      </Box>
+export class Devices extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { devices: [] };
+  }
 
-      <ControlContainer flex='2' ml={3} bg='secondary.main'>
-        <ArcSlider width='450px' mx='auto'>
-          <Txt color='white'>Brightness</Txt>
-        </ArcSlider>
-      </ControlContainer>
-    </Flex>
-  );
-};
+  componentDidMount() {
+    this.getDevices();
+  }
+
+  getDevices() {
+    fetch('http://localhost:3000/api/v1/device')
+      .then(response => response.json())
+      .then(response => {
+        this.setState({ devices: response.data });
+      })
+      .catch(error => console.error(error));
+  }
+
+  render() {
+    return (
+      <Flex flex='1' mt={4}>
+        <Box flex='3' pl={3}>
+          <Table
+            flex='1'
+            columns={columns}
+            data={this.state.devices}
+            rowKey='id'
+            //onRowClick={console.log}
+          />
+        </Box>
+
+        <ControlContainer flex='2' ml={3} bg='secondary.main'>
+          <ArcSlider width='450px' mx='auto'>
+            <Txt color='white'>Brightness</Txt>
+          </ArcSlider>
+        </ControlContainer>
+      </Flex>
+    );
+  }
+}
