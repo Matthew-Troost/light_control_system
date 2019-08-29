@@ -28,7 +28,7 @@ const columns = [
     field: 'brightness',
     label: 'Brightness',
     render(value) {
-      return `${value}%`;
+      return `${Math.round(value)}%`;
     },
   },
 ];
@@ -66,6 +66,12 @@ export class Devices extends React.Component {
     this.setState({ selectedDevice: selectedRows[0] });
   };
 
+  updateBrightness = brightness => {
+    const selectedDevice = this.state.selectedDevice;
+    selectedDevice.brightness = brightness * 100;
+    this.setState({ selectedDevice });
+  };
+
   render() {
     return (
       <Flex flex='1' mt={4}>
@@ -88,8 +94,14 @@ export class Devices extends React.Component {
                 ? this.state.selectedDevice.brightness / 100
                 : 0
             }
+            onValueChange={this.updateBrightness}
           >
-            <Heading.h2>{this.value}%</Heading.h2>
+            <Heading.h2>
+              {this.state.selectedDevice
+                ? Math.round(this.state.selectedDevice.brightness)
+                : 0}
+              %
+            </Heading.h2>
             <Txt color='white'>Brightness</Txt>
           </ArcSlider>
         </ControlContainer>
