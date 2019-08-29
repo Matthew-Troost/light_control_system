@@ -12,10 +12,11 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-scripts": "^3.1.0",
-    "rendition": "^11.9.2",
+    "rendition": "^11.10.0",
     "styled-components": "^4.3.2"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^5.1.11",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.14.3",

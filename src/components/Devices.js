@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArcSlider, Box, Checkbox, Flex, Table, Txt } from 'rendition';
+import { ArcSlider, Box, Checkbox, Flex, Table, Txt, Heading } from 'rendition';
 import styled from 'styled-components';
 
 const ControlContainer = styled(Box)`
@@ -9,13 +9,12 @@ const ControlContainer = styled(Box)`
 const columns = [
   {
     field: 'name',
-    label: 'Name',
+    label: 'Room',
     sortable: true,
   },
   {
     field: 'active',
     label: 'State',
-    sortable: true,
     render(value) {
       return (
         <Flex>
@@ -28,7 +27,6 @@ const columns = [
   {
     field: 'brightness',
     label: 'Brightness',
-    sortable: true,
     render(value) {
       return `${value}%`;
     },
@@ -38,7 +36,14 @@ const columns = [
 export class Devices extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { devices: [] };
+    this.state = {
+      devices: [],
+      selectedDevice: null,
+    };
+
+    this.onBrightnessUpdated = value => {
+      console.log(value);
+    };
   }
 
   componentDidMount() {
@@ -54,21 +59,26 @@ export class Devices extends React.Component {
       .catch(error => console.error(error));
   }
 
+  getSelectedRow(selectedRows) {
+    console.log(selectedRows);
+  }
+
   render() {
     return (
       <Flex flex='1' mt={4}>
-        <Box flex='3' pl={3}>
+        <Box flex='3'>
           <Table
             flex='1'
             columns={columns}
             data={this.state.devices}
             rowKey='id'
-            //onRowClick={console.log}
+            onCheck={this.getSelectedRow}
           />
         </Box>
 
         <ControlContainer flex='2' ml={3} bg='secondary.main'>
           <ArcSlider width='450px' mx='auto'>
+            <Heading.h2>{this.value}%</Heading.h2>
             <Txt color='white'>Brightness</Txt>
           </ArcSlider>
         </ControlContainer>
