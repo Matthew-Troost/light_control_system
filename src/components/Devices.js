@@ -59,9 +59,12 @@ export class Devices extends React.Component {
       .catch(error => console.error(error));
   }
 
-  getSelectedRow(selectedRows) {
-    console.log(selectedRows);
-  }
+  getSelectedRow = selectedRows => {
+    if (selectedRows.length > 1) {
+      selectedRows.shift();
+    }
+    this.setState({ selectedDevice: selectedRows[0] });
+  };
 
   render() {
     return (
@@ -77,7 +80,15 @@ export class Devices extends React.Component {
         </Box>
 
         <ControlContainer flex='2' ml={3} bg='secondary.main'>
-          <ArcSlider width='450px' mx='auto'>
+          <ArcSlider
+            width='450px'
+            mx='auto'
+            value={
+              this.state.selectedDevice
+                ? this.state.selectedDevice.brightness / 100
+                : 0
+            }
+          >
             <Heading.h2>{this.value}%</Heading.h2>
             <Txt color='white'>Brightness</Txt>
           </ArcSlider>
