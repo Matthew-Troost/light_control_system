@@ -22,7 +22,6 @@ export class Devices extends React.Component {
       devices: [],
       selectedDeviceId: -1,
     };
-    this.toggleSwitch = this.toggleSwitch.bind(this);
   }
 
   componentDidMount() {
@@ -39,7 +38,7 @@ export class Devices extends React.Component {
   }
 
   getSelectedRow = selectedRows => {
-    if (selectedRows.length == 0) {
+    if (selectedRows.length === 0) {
       return this.setState({
         selectedDeviceId: -1,
       });
@@ -50,7 +49,7 @@ export class Devices extends React.Component {
     }
 
     var index = this.state.devices.indexOf(
-      this.state.devices.find(device => device.id == selectedRows[0].id),
+      this.state.devices.find(device => device.id === selectedRows[0].id),
     );
 
     this.setState({
@@ -59,17 +58,25 @@ export class Devices extends React.Component {
   };
 
   updateBrightness = brightness => {
+    if (this.state.selectedDeviceId > -1) {
+      const updatedDevices = this.state.devices;
+      updatedDevices[this.state.selectedDeviceId].brightness = brightness * 100;
+      this.setState({ devices: updatedDevices });
+    }
+  };
+
+  changeName = name => {
     const updatedDevices = this.state.devices;
-    updatedDevices[this.state.selectedDeviceId].brightness = brightness * 100;
+    updatedDevices[this.state.selectedDeviceId].name = name;
     this.setState({ devices: updatedDevices });
   };
 
-  toggleSwitch() {
-    console.log('hit');
+  toggleSwitch = active => {
+    console.log(active);
     // const selectedDevice = this.state.selectedDevice;
     // selectedDevice.active = active;
     // this.setState({ selectedDevice });
-  }
+  };
 
   render() {
     const columns = [
@@ -84,12 +91,7 @@ export class Devices extends React.Component {
         render(value) {
           return (
             <Flex>
-              <Checkbox
-                toggle
-                checked={value}
-                onChange={event => this.toggleSwitch}
-                mr={2}
-              />
+              <Checkbox toggle onChange={this.toggleSwitch} mr={2} />
               <Txt ml={2}>{value ? 'On' : 'Off'}</Txt>
             </Flex>
           );
@@ -114,7 +116,15 @@ export class Devices extends React.Component {
             rowKey='id'
             onCheck={this.getSelectedRow}
           />
-          <Input mb={3} />
+          <Input
+            mb={3}
+            value={
+              this.state.selectedDeviceId > -1
+                ? this.state.devices[this.state.selectedDeviceId].name
+                : ''
+            }
+            onChange={event => this.changeName(event.target.value)}
+          />
         </Box>
 
         <ControlContainer flex='2' ml={3} bg='secondary.main'>
