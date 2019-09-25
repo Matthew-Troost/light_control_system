@@ -1,49 +1,28 @@
 import React from 'react';
-import { ArcSlider, Box, Checkbox, Flex, Table, Txt, Heading } from 'rendition';
+import {
+  ArcSlider,
+  Box,
+  Checkbox,
+  Flex,
+  Table,
+  Txt,
+  Heading,
+  Input,
+} from 'rendition';
 import styled from 'styled-components';
 
 const ControlContainer = styled(Box)`
   border-top-left-radius: 10px;
 `;
 
-const columns = [
-  {
-    field: 'name',
-    label: 'Room',
-    sortable: true,
-  },
-  {
-    field: 'active',
-    label: 'State',
-    render(value) {
-      return (
-        <Flex>
-          <Checkbox toggle checked={value} onChange={console.log} mr={2} />
-          <Txt ml={2}>{value ? 'On' : 'Off'}</Txt>
-        </Flex>
-      );
-    },
-  },
-  {
-    field: 'brightness',
-    label: 'Brightness',
-    render(value) {
-      return `${Math.round(value)}%`;
-    },
-  },
-];
-
 export class Devices extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       devices: [],
-      selectedDevice: null,
+      selectedDeviceId: -1,
     };
-
-    this.onBrightnessUpdated = value => {
-      console.log(value);
-    };
+    this.toggleSwitch = this.toggleSwitch.bind(this);
   }
 
   componentDidMount() {
@@ -60,19 +39,71 @@ export class Devices extends React.Component {
   }
 
   getSelectedRow = selectedRows => {
+    if (selectedRows.length == 0) {
+      return this.setState({
+        selectedDeviceId: -1,
+      });
+    }
+
     if (selectedRows.length > 1) {
       selectedRows.shift();
     }
-    this.setState({ selectedDevice: selectedRows[0] });
+
+    var index = this.state.devices.indexOf(
+      this.state.devices.find(device => device.id == selectedRows[0].id),
+    );
+
+    this.setState({
+      selectedDeviceId: index,
+    });
   };
 
   updateBrightness = brightness => {
-    const selectedDevice = this.state.selectedDevice;
-    selectedDevice.brightness = brightness * 100;
-    this.setState({ selectedDevice });
+    const updatedDevices = this.state.devices;
+    updatedDevices[this.state.selectedDeviceId].brightness = brightness * 100;
+    this.setState({ devices: updatedDevices });
   };
 
+  toggleSwitch() {
+    console.log('hit');
+    // const selectedDevice = this.state.selectedDevice;
+    // selectedDevice.active = active;
+    // this.setState({ selectedDevice });
+  }
+
   render() {
+    const columns = [
+      {
+        field: 'name',
+        label: 'Room',
+        sortable: true,
+      },
+      {
+        field: 'active',
+        label: 'State',
+        render(value) {
+          return (
+            <Flex>
+              <Checkbox
+                toggle
+                checked={value}
+                onChange={event => this.toggleSwitch}
+                mr={2}
+              />
+              <Txt ml={2}>{value ? 'On' : 'Off'}</Txt>
+            </Flex>
+          );
+        },
+      },
+      {
+        field: 'brightness',
+        label: 'Brightness',
+        render(value) {
+          return `${Math.round(value)}%`;
+        },
+      },
+    ];
+
     return (
       <Flex flex='1' mt={4}>
         <Box flex='3'>
@@ -83,6 +114,7 @@ export class Devices extends React.Component {
             rowKey='id'
             onCheck={this.getSelectedRow}
           />
+          <Input mb={3} />
         </Box>
 
         <ControlContainer flex='2' ml={3} bg='secondary.main'>
@@ -90,15 +122,25 @@ export class Devices extends React.Component {
             width='450px'
             mx='auto'
             value={
-              this.state.selectedDevice
-                ? this.state.selectedDevice.brightness / 100
+              this.state.selectedDeviceId > -1
+                ? this.state.devices[this.state.selectedDeviceId].brightness /
+                  100
                 : 0
             }
             onValueChange={this.updateBrightness}
+            fillColor={
+              this.state.selectedDeviceId > -1
+                ? this.state.devices[this.state.selectedDeviceId].active
+                  ? ''
+                  : '#B8B8B8'
+                : '#B8B8B8'
+            }
           >
-            <Heading.h2>
-              {this.state.selectedDevice
-                ? Math.round(this.state.selectedDevice.brightness)
+            <Heading.h2 color='white'>
+              {this.state.selectedDeviceId > -1
+                ? Math.round(
+                    this.state.devices[this.state.selectedDeviceId].brightness,
+                  )
                 : 0}
               %
             </Heading.h2>

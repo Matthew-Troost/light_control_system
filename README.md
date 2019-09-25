@@ -37,3 +37,10 @@ The running image can now be accessed at http://localhost:8000
 Code can be manually linted with `eslint` using the command `npm run lint`.
 Files are also prettified using `husky` and `prettier` as a pre-commit hook.
 
+***
+
+# Assumptions
+
+> The following aasumptions were made to complete this assignment:
+
+- Only one room/light-buld can be controlled at a time. [Therefore, I made only one row selectable at a time] 
